@@ -41,6 +41,10 @@
     "@arcblock/did-auth": "^1.18.128",
     "@arcblock/did-auth-storage-nedb": "^1.7.1",
     "@blocklet/sdk": "^1.16.29",
+    "@chakra-ui/icons": "^1.1.1",
+    "@chakra-ui/react": "^1.8.1",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@ocap/client": "^1.18.128",
     "@ocap/mcrypto": "^1.18.128",
     "@ocap/wallet": "^1.18.128",
@@ -49,7 +53,10 @@
     "cors": "^2.8.5",
     "dotenv-flow": "^4.1.0",
     "express": "^4.19.2",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "framer-motion": "^11.3.28",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.3.2",

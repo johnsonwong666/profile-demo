@@ -5,6 +5,7 @@ const cors = require('cors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const init = require('./init/index');
 
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -16,11 +17,16 @@ app.use(cookieParser());
 app.use(express.json({ limit: '1 mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1 mb' }));
 app.use(cors());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const router = express.Router();
+const profileRoutes = require('./routes/profile');
+const commonRoutes = require('./routes/common');
 router.use('/api', require('./routes'));
 
 app.use(router);
+app.use('/api/profile', profileRoutes);
+app.use('/api/common', commonRoutes);
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
 
@@ -35,6 +41,9 @@ if (isProduction) {
     res.status(500).send('Something broke!');
   });
 }
+
+// 初始化
+init();
 
 const port = parseInt(process.env.BLOCKLET_PORT, 10);
 
