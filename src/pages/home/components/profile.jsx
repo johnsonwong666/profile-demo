@@ -21,9 +21,9 @@ import {
 } from '@chakra-ui/react';
 import { EditIcon } from '@chakra-ui/icons';
 import UploadErrorModal from './upload-error-modal';
-import { useUserProfile } from '../context/user-profile-context.jsx';
-import { validateEmail, validatePhone } from '../utils';
-import api from '../libs/api';
+import { useUserProfile } from '../../../context/user-profile-context';
+import { validateEmail, validatePhone } from '../../../utils/index';
+import { editProfile, uploadImage } from '../api';
 
 function Profile() {
   const { userProfile, getUserProfile } = useUserProfile();
@@ -80,8 +80,7 @@ function Profile() {
         location: formData.location,
       };
 
-      api
-        .post('api/profile/edit-profile', payload)
+      editProfile(payload)
         .then(() => {
           toast({
             title: 'Profile updated.',
@@ -94,11 +93,11 @@ function Profile() {
           getUserProfile();
           onCloseEditModal();
         })
-        .catch(() => {
+        .catch((error) => {
           toast({
             title: 'An error occurred.',
             position: 'top',
-            description: 'Unable to update profile. Please try again later.',
+            description: `${error ? error : 'Unable to update profile. Please try again later.'} `,
             status: 'error',
             duration: 5000,
             isClosable: true,
@@ -117,22 +116,25 @@ function Profile() {
       const formDataInstance = new FormData();
       formDataInstance.append('image', selected);
 
-      api
-        .post('api/common/upload', formDataInstance)
-        .then(async (data) => {
-          if (data?.data.url) {
-            // 处理成功上传后的逻辑
-            await api.post('api/profile/edit-profile', {
+      uploadImage(formDataInstance)
+        .then(async (res) => {
+          if (res?.data.url) {
+            await editProfile({
               id: userProfile.id,
-              avatar: data.data.url,
+              avatar: res.data.url,
             });
             getUserProfile();
-          } else {
-            console.error('Upload failed:', data.error);
           }
         })
         .catch((error) => {
-          console.error('Error:', error);
+          toast({
+            title: 'An error occurred.',
+            position: 'top',
+            description: `${error ? error : 'Unable to upload image. Please try again later.'} `,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
         });
     } else {
       onOpenUploadError();

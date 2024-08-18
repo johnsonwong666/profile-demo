@@ -3,7 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import { UserProfileProvider } from './context/user-profile-context.jsx'; // 假设你把上面的代码放在 UserProfileContext.js 文件中
 
-import Home from './pages/home';
+import Home from './pages/home/home';
 
 function App() {
   return (

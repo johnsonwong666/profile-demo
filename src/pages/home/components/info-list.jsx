@@ -1,7 +1,7 @@
 import { Box, Text, VStack, Icon, HStack } from '@chakra-ui/react';
 import { PhoneIcon, CalendarIcon, EmailIcon, createIcon } from '@chakra-ui/icons';
 
-import { useUserProfile } from '../context/user-profile-context.jsx';
+import { useUserProfile } from '../../../context/user-profile-context';
 
 export const LocationIcon = createIcon({
   displayName: 'LocationIcon',

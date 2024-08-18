@@ -1,13 +1,14 @@
 import { useRef } from 'react';
-import { Box, Button, Image, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Image, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import UploadErrorModal from './upload-error-modal';
-import { useUserProfile } from '../context/user-profile-context.jsx';
-import api from '../libs/api';
+import { useUserProfile } from '../../../context/user-profile-context.jsx';
+import { uploadImage, editProfile } from '../api/index';
 
 export default function Cover() {
   const { userProfile, getUserProfile } = useUserProfile();
   const inputRef = useRef(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
 
   const openChooseFile = () => {
     inputRef.current.click();
@@ -21,21 +22,24 @@ export default function Cover() {
       const formData = new FormData();
       formData.append('image', selected);
 
-      api
-        .post('api/common/upload', formData)
-        .then(async (data) => {
-          if (data?.data.url) {
-            await api.post('api/profile/edit-profile', {
+      uploadImage(formData)
+        .then(async (res) => {
+          if (res?.data.url) {
+            await editProfile({
               id: userProfile.id,
-              cover: data.data.url,
+              cover: res.data.url,
             });
             getUserProfile();
-          } else {
-            console.error('Upload failed:', data.error);
           }
         })
         .catch((error) => {
-          console.error('Error:', error);
+          toast({
+            title: 'An error occurred.',
+            position: 'top',
+            description: `${error ? error : 'Unable to upload image. Please try again later.'} `,
+            duration: 5000,
+            isClosable: true,
+          });
         });
     } else {
       onOpen();
@@ -51,7 +55,7 @@ export default function Cover() {
         src={
           userProfile.cover
             ? userProfile.cover
-            : 'cdn.jsdelivr.net/gh/johnsonwong666/img/DALL%C2%B7E%202024-08-17%2019.14.25%20-%20A%20simple%2C%20clean%20background%20image%20with%20a%20pure%20white%20background.%20The%20design%20should%20be%20entirely%20minimalistic%2C%20with%20no%20gradients%2C%20textures%2C%20or%20additional%20.webp'
+            : 'https://cdn.jsdelivr.net/gh/johnsonwong666/img/DALL%C2%B7E%202024-08-17%2019.14.25%20-%20A%20simple%2C%20clean%20background%20image%20with%20a%20pure%20white%20background.%20The%20design%20should%20be%20entirely%20minimalistic%2C%20with%20no%20gradients%2C%20textures%2C%20or%20additional%20.webp'
         }
         alt="Cover"
       />
